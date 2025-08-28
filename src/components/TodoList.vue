@@ -11,7 +11,9 @@ const emit = defineEmits<{
 }>();
 
 const handleToggle = async (id: number) => {
-  await toggleTodo(id);
+  const todo = props.todos.find(t => t.id === id);
+  if (!todo) return;
+  await toggleTodo(id, !todo.done);
   emit("toggle", id);
 };
 
@@ -29,8 +31,7 @@ const handleUpdate = (todo: Todo) => {
 const saveUpdate = async () => {
   if (!editingTodo.value) return;
 
-  await updateTodo(editingTodo.value.id, editingTodo.value.text);
-  // nếu muốn cập nhật deadline backend thì sửa service updateTodo để nhận thêm deadline
+  await updateTodo(editingTodo.value.id, editingTodo.value.text, editingTodo.value.deadline);
   emit("update", editingTodo.value.id, editingTodo.value.text);
   editingTodo.value = null;
 };

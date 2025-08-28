@@ -28,8 +28,11 @@ async function addTodoHandler(text: string, deadline: string) {
 }
 
 async function toggleTodoHandler(id: number) {
-  await toggleTodo(id);
-  await fetchTodos();
+  const todo = todos.value.find(t => t.id === id);
+  if (todo) {
+    await toggleTodo(id, !todo.done);
+    await fetchTodos();
+  }
 }
 
 async function updateTodoHandler(id: number, newText: string) {

@@ -17,7 +17,7 @@ const loading = ref(false);
 const handleToggle = async () => {
   loading.value = true;
   try {
-    const updated = await toggleTodo(props.todo.id);
+    const updated = await toggleTodo(props.todo.id, !props.todo.done);
     emit("toggled", updated);
   } finally {
     loading.value = false;

@@ -22,20 +22,22 @@ export async function addTodo(text: string, deadline?: string): Promise<Todo> {
   return res.json();
 }
 
-export async function updateTodo(id: number, newText: string): Promise<Todo> {
+export async function updateTodo(id: number, newText: string, deadline?: string): Promise<Todo> {
+  const body: any = { text: newText };
+  if (deadline !== undefined) body.deadline = deadline;
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: newText }),
+    body: JSON.stringify(body),
   });
   return res.json();
 }
 
-export async function toggleTodo(id: number): Promise<Todo> {
+export async function toggleTodo(id: number, done: boolean): Promise<Todo> {
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ done: true}),
+    body: JSON.stringify({ done }),
   });
   return res.json();
 }
