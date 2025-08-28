@@ -6,7 +6,12 @@ const search = ref("");
 const showAdd = ref(false);
 const deadline = ref("");
 const error = ref("");
-const emit = defineEmits<{ (e: "add", text: string, deadline: string): void; (e: "search", value: string): void }>();
+const loading = ref(false);
+
+const emit = defineEmits<{
+  (e: "add", text: string, deadline: string): void;
+  (e: "search", value: string): void;
+}>();
 
 function handleSubmit() {
   error.value = "";
@@ -24,10 +29,17 @@ function handleSubmit() {
     error.value = "Không được chọn thời gian đã trôi qua!";
     return;
   }
-  emit("add", text.value.trim(), deadline.value);
-  text.value = "";
-  deadline.value = "";
-  showAdd.value = false;
+
+  loading.value = true;
+  try {
+    emit("add", text.value.trim(), deadline.value);
+    // reset form
+    text.value = "";
+    deadline.value = "";
+    showAdd.value = false;
+  } finally {
+    loading.value = false;
+  }
 }
 
 watch(search, (val) => emit("search", val));
@@ -71,19 +83,22 @@ watch(search, (val) => emit("search", val));
         class="w-full border border-gray-600 bg-[#333] text-white rounded px-3 py-2 mb-3 focus:outline-none placeholder-gray-400"
         placeholder="Nhập task mới..."
         autofocus
+        :disabled="loading"
       />
       <label class="block mb-2 text-gray-300">Hạn task</label>
       <input
         v-model="deadline"
         type="datetime-local"
         class="w-full border border-gray-600 bg-[#333] text-white rounded px-3 py-2 mb-3 focus:outline-none"
+        :disabled="loading"
       />
       <div v-if="error" class="text-red-400 mb-2">{{ error }}</div>
       <button
         type="submit"
-        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full disabled:opacity-50"
+        :disabled="loading"
       >
-        Thêm
+        {{ loading ? "Đang thêm..." : "Thêm" }}
       </button>
     </form>
   </div>

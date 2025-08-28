@@ -1,45 +1,50 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import TodoInput from "./components/TodoInput.vue";
 import TodoList from "./components/TodoList.vue";
 import NavBar from "./components/NavBar.vue";
 import SideBar from "./components/SideBar.vue";
+import {
+  getTodos,
+  addTodo,
+  updateTodo,
+  toggleTodo,
+  removeTodo,
+  clearCompleted
+} from "./services/todoService";
+import type { Todo } from "./services/todoService";
 
-type Todo = {
-  id: number;
-  text: string;
-  done: boolean;
-  deadline?: string;
-};
-
-const todos = ref<Todo[]>(JSON.parse(localStorage.getItem("todos") || "[]"));
+const todos = ref<Todo[]>([]);
 const filter = ref<"all" | "active" | "completed">("all");
 const search = ref("");
 
-watch(todos, () => {
-  localStorage.setItem("todos", JSON.stringify(todos.value));
-}, { deep: true });
-
-function addTodo(text: string, deadline?: string) {
-  todos.value.push({ id: Date.now(), text, done: false, deadline });
+async function fetchTodos() {
+  todos.value = await getTodos();
 }
 
-function toggleTodo(id: number) {
-  const todo = todos.value.find(t => t.id === id);
-  if (todo) todo.done = !todo.done;
+async function addTodoHandler(text: string, deadline: string) {
+  await addTodo(text, deadline);
+  await fetchTodos();
 }
 
-function updateTodo(id: number, newText: string) {
-  const todo = todos.value.find(t => t.id === id);
-  if (todo) todo.text = newText;
+async function toggleTodoHandler(id: number) {
+  await toggleTodo(id);
+  await fetchTodos();
 }
 
-function removeTodo(id: number) {
-  todos.value = todos.value.filter(t => t.id !== id);
+async function updateTodoHandler(id: number, newText: string) {
+  await updateTodo(id, newText);
+  await fetchTodos();
 }
 
-function clearCompleted() {
-  todos.value = todos.value.filter(t => !t.done);
+async function removeTodoHandler(id: number) {
+  await removeTodo(id);
+  await fetchTodos();
+}
+
+async function clearCompletedHandler() {
+  await clearCompleted();
+  await fetchTodos();
 }
 
 function setFilter(val: "all" | "active" | "completed") {
@@ -50,7 +55,6 @@ function setSearch(val: string) {
   search.value = val;
 }
 
-// computed list theo filter
 const filteredTodos = computed(() => {
   let list = todos.value;
   if (filter.value === "active") list = list.filter(t => !t.done);
@@ -63,22 +67,24 @@ const filteredTodos = computed(() => {
 });
 
 const remaining = computed(() => todos.value.filter(t => !t.done).length);
+
+onMounted(fetchTodos);
 </script>
 
 <template>
   <NavBar/>
   <SideBar :filter="filter" @set-filter="setFilter"/>
   <div class="container mx-auto p-4 justify-center items-center flex flex-col">
-    <TodoInput @add="addTodo" @search="setSearch" />
+    <TodoInput @add="addTodoHandler" @search="setSearch" />
     <TodoList
       :todos="filteredTodos"
-      @toggle="toggleTodo"
-      @remove="removeTodo"
-      @update="updateTodo"
+      @toggle="toggleTodoHandler"
+      @remove="removeTodoHandler"
+      @update="updateTodoHandler"
     />
     <div class="flex justify-between items-center w-full max-w-md mt-4">
       <span>{{ remaining }} tasks left</span>
-      <button class="text-sm font-bold text-red-500 btn" @click="clearCompleted">
+      <button class="text-sm font-bold text-red-500 btn" @click="clearCompletedHandler">
         Clear Completed
       </button>
     </div>
