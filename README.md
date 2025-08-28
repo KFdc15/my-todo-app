@@ -11,3 +11,5 @@ npm install
 To start the web
 
 npm run dev
+
+Please clone the "todo-api" to run BE
