@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/todos';
+import { http } from './httpClient';
 
 export type Todo = {
   id: number;
@@ -7,47 +7,38 @@ export type Todo = {
   deadline?: string;
 };
 
+const RESOURCE = '/todos';
+
 export async function getTodos(): Promise<Todo[]> {
-  const res = await fetch(API_URL);
-  return res.json();
+  const { data } = await http.get<Todo[]>(RESOURCE);
+  return data;
 }
 
 export async function addTodo(text: string, deadline?: string): Promise<Todo> {
-  const todo = { text, done: false, deadline };
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(todo),
-  });
-  return res.json();
+  const payload = { text, done: false, deadline };
+  const { data } = await http.post<Todo>(RESOURCE, payload);
+  return data;
 }
 
 export async function updateTodo(id: number, newText: string, deadline?: string): Promise<Todo> {
-  const body: any = { text: newText };
+  const body: Partial<Todo> = { text: newText };
   if (deadline !== undefined) body.deadline = deadline;
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  return res.json();
+  const { data } = await http.patch<Todo>(`${RESOURCE}/${id}`, body);
+  return data;
 }
 
 export async function toggleTodo(id: number, done: boolean): Promise<Todo> {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ done }),
-  });
-  return res.json();
+  const { data } = await http.patch<Todo>(`${RESOURCE}/${id}`, { done });
+  return data;
 }
 
 export async function removeTodo(id: number): Promise<void> {
-  await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+  await http.delete(`${RESOURCE}/${id}`);
 }
 
 export async function clearCompleted(): Promise<void> {
   const todos = await getTodos();
   const completed = todos.filter(t => t.done);
+  if (!completed.length) return;
   await Promise.all(completed.map(t => removeTodo(t.id)));
 }

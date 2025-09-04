@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { toggleTodo, removeTodo, updateTodo } from "../services/todoService";
+import { toggleTodo, updateTodo } from "../services/todoService";
 import type { Todo } from "../services/todoService";
 
 const props = defineProps<{ todos: Todo[] }>();
@@ -15,11 +15,6 @@ const handleToggle = async (id: number) => {
   if (!todo) return;
   await toggleTodo(id, !todo.done);
   emit("toggle", id);
-};
-
-const handleRemove = async (id: number) => {
-  await removeTodo(id);
-  emit("remove", id);
 };
 
 const editingTodo = ref<{ id: number; text: string; deadline?: string } | null>(null);
@@ -88,7 +83,7 @@ const saveUpdate = async () => {
         </div>
 
         <button
-          @click="handleRemove(todo.id)"
+          @click="$emit('remove', todo.id)"
           class="ml-auto font-bold text-red-400 hover:text-red-600 h-1"
         >
           🗑

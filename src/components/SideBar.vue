@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+
 const open = ref(false);
 
-const props = defineProps<{ filter: "all" | "active" | "completed" }>();
+const props = defineProps<{ filter: 'all' | 'active' | 'completed' }>();
 const emit = defineEmits<{
-  (e: "set-filter", val: "all" | "active" | "completed"): void;
+  (e: 'set-filter', val: 'all' | 'active' | 'completed'): void;
 }>();
+
+function close() {
+  open.value = false;
+}
 </script>
 
 <template>
@@ -24,11 +29,26 @@ const emit = defineEmits<{
       v-if="open"
       class="fixed top-0 left-0 h-full w-64 bg-[#181818] shadow-lg z-40 flex flex-col pt-16"
     >
-    <br></br>
+      <br />
       <nav class="flex flex-col space-y-6 px-8">
-        <a href="#" class="text-white sidebar" @click="emit('set-filter', 'all'); open=false" :class="{ 'font-bold sidebar': props.filter==='all' }">All Tasks</a>
-        <a href="#" class="text-white sidebar" @click="emit('set-filter', 'active'); open=false" :class="{ 'font-bold sidebar': props.filter==='active' }">Active Tasks</a>
-        <a href="#" class="text-white sidebar" @click="emit('set-filter', 'completed'); open=false" :class="{ 'font-bold sidebar': props.filter==='completed' }">Completed Tasks</a>
+        <a
+          href="#"
+          class="text-white sidebar"
+          @click="emit('set-filter','all'); close()"
+          :class="{ 'font-bold sidebar': props.filter==='all' }"
+        >All Tasks</a>
+        <a
+          href="#"
+          class="text-white sidebar"
+          @click="emit('set-filter','active'); close()"
+          :class="{ 'font-bold sidebar': props.filter==='active' }"
+        >Active Tasks</a>
+        <a
+          href="#"
+          class="text-white sidebar"
+          @click="emit('set-filter','completed'); close()"
+          :class="{ 'font-bold sidebar': props.filter==='completed' }"
+        >Completed Tasks</a>
       </nav>
     </aside>
   </transition>
