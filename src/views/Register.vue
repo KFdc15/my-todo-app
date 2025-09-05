@@ -40,61 +40,71 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-[#121212] text-white">
-    <form @submit.prevent="onSubmit" class="w-full max-w-sm space-y-4 bg-[#1e1e1e] p-6 rounded">
-      <h2 class="text-xl font-bold text-center">Đăng ký</h2>
+  <div class="flex items-center justify-center h-[100dvh] bg-[#121212] text-white px-4">
+    <form
+      @submit.prevent="onSubmit"
+      class="w-full max-w-sm space-y-3 bg-[#1e1e1e]/90 p-6 rounded-xl shadow-lg backdrop-blur-md"
+    >
+      <h2 class="text-2xl font-bold text-center">Đăng ký</h2>
 
-      <div>
-        <label class="block mb-1 text-sm">Username</label>
+      <div class="space-y-1">
+        <label class="block text-xs uppercase tracking-wide text-gray-400">Username</label>
         <input
           v-model.trim="username"
-          class="w-full px-3 py-2 rounded bg-[#2a2a2a]"
+          class="w-full px-3 py-2 rounded bg-[#2a2a2a] focus:outline-none focus:ring focus:ring-green-500/40"
+          autocomplete="username"
           required
         />
       </div>
 
-      <div>
-        <label class="block mb-1 text-sm">Mật khẩu</label>
+      <div class="space-y-1">
+        <label class="block text-xs uppercase tracking-wide text-gray-400">Mật khẩu</label>
         <input
           v-model="password"
           type="password"
-          class="w-full px-3 py-2 rounded bg-[#2a2a2a]"
+          class="w-full px-3 py-2 rounded bg-[#2a2a2a] focus:outline-none focus:ring focus:ring-green-500/40"
+          autocomplete="new-password"
           required
         />
       </div>
 
-      <div>
-        <label class="block mb-1 text-sm">Nhập lại mật khẩu</label>
+      <div class="space-y-1">
+        <label class="block text-xs uppercase tracking-wide text-gray-400">Nhập lại mật khẩu</label>
         <input
           v-model="confirm"
           type="password"
           :class="[
-            'w-full px-3 py-2 rounded bg-[#2a2a2a] outline-none',
-            confirm && !passwordsMatch ? 'ring-2 ring-red-500' : ''
+            'w-full px-3 py-2 rounded bg-[#2a2a2a] focus:outline-none focus:ring',
+            confirm && !passwordsMatch ? 'ring-red-500 focus:ring-red-500/60' : 'focus:ring-green-500/40'
           ]"
+          autocomplete="new-password"
           required
         />
-        <p
-          v-if="confirm && !passwordsMatch"
-          class="text-red-400 text-xs mt-1"
-        >
+        <p v-if="confirm && !passwordsMatch" class="text-red-400 text-xs mt-1">
           Mật khẩu không khớp
         </p>
       </div>
 
       <button
         :disabled="!canSubmit"
-        class="w-full bg-green-600 hover:bg-green-500 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed transition"
+        class="w-full bg-green-600 hover:bg-green-500 py-2 rounded font-medium disabled:opacity-50 disabled:cursor-not-allowed transition"
       >
         {{ loading ? 'Đang xử lý...' : 'Tạo tài khoản' }}
       </button>
 
-      <p class="text-sm text-center">
+      <p class="text-xs text-center text-gray-400">
         Đã có tài khoản?
-        <RouterLink to="/login" class="text-blue-400 hover:underline">Đăng nhập</RouterLink>
+        <RouterLink to="/login" class="text-green-400 hover:underline">Đăng nhập</RouterLink>
       </p>
 
-      <p v-if="error" class="text-red-400 text-sm text-center">{{ error }}</p>
+      <p v-if="error" class="text-red-400 text-xs text-center">{{ error }}</p>
     </form>
   </div>
 </template>
+
+<style scoped>
+@media (max-height: 560px) {
+  form { padding: 14px; }
+  h2 { font-size: 1.15rem; }
+}
+</style>
