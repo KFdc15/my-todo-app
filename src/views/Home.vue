@@ -92,8 +92,46 @@ onBeforeUnmount(() => {
 <template>
   <SideBar :filter="filter" @set-filter="setFilter" />
 
-  <div v-if="!authed" class="min-h-[50vh] flex items-center justify-center text-lg text-gray-300">
-    Please login to explore for more
+  <div
+    v-if="!authed"
+    class="prelogin-wrapper relative min-h-[calc(100vh-120px)] flex items-center justify-center px-4"
+  >
+    <!-- Animated blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="glass-card w-full max-w-2xl relative z-10 p-10 rounded-2xl">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 gradient-text">
+        Organize. Focus. Achieve.
+      </h1>
+      <p class="text-gray-300 leading-relaxed mb-6">
+        Quản lý công việc cá nhân với tốc độ nhanh, giao diện tối giản và đồng bộ bảo mật.
+        Đăng nhập để tạo, tìm kiếm, lọc và đánh dấu hoàn thành nhiệm vụ của bạn.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 mb-8">
+        <RouterLink
+          to="/login"
+          class="btn-primary text-center"
+        >Đăng nhập</RouterLink>
+        <RouterLink
+          to="/register"
+          class="btn-outline text-center"
+        >Tạo tài khoản</RouterLink>
+      </div>
+
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-300 feature-list">
+        <li><span class="icon">⚡</span> Thêm & chỉnh sửa tức thì</li>
+        <li><span class="icon">🔍</span> Tìm kiếm nhanh theo từ khóa</li>
+        <li><span class="icon">🎯</span> Lọc Active / Completed</li>
+        <li><span class="icon">🛡️</span> Phiên đăng nhập bảo vệ bằng token</li>
+      </ul>
+
+      <div class="mt-10 text-xs text-gray-500 uppercase tracking-wider">
+        Please login to explore for more
+      </div>
+    </div>
   </div>
 
   <div v-else class="container mx-auto p-4 justify-center items-center flex flex-col">
