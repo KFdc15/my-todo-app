@@ -90,8 +90,6 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <SideBar :filter="filter" @set-filter="setFilter" />
-
   <div
     v-if="!authed"
     class="prelogin-wrapper relative min-h-[calc(100vh-120px)] flex items-center justify-center px-4"
@@ -135,6 +133,7 @@ onBeforeUnmount(() => {
   </div>
 
   <div v-else class="container mx-auto p-4 justify-center items-center flex flex-col">
+    <SideBar :filter="filter" @set-filter="setFilter" />
     <TodoInput @add="addTodoHandler" @search="setSearch" />
     <TodoList
       :todos="filteredTodos"
